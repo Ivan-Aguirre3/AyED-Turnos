@@ -86,9 +86,7 @@ bool LeeTurnos(ifstream &TurnosDiaHora, ttrTurnos &trTurnos, int cardEspec, tvrE
     char desc;
     str20 TurnoEspec;
     TurnosDiaHora.get(TurnoEspec, 21);
-    if (BusLinF(TurnoEspec, cardEspec, vrEspec, i) == 1000) {
-        cout << "No se encontro objetivo en funcion LeeTurnos, linea 47-58"<<endl;
-        }; // profundidad segun hora y minuto, de forma hhmm *//
+    BusLinF(TurnoEspec, cardEspec, vrEspec, i) == 1000); // profundidad segun hora y minuto, de forma hhmm *//
     TurnosDiaHora.ignore();
     TurnosDiaHora >> j; // las columnas corresponden con los dias, empezando con el 0 (el dia 1 = pos 0)*/
     TurnosDiaHora.ignore();
