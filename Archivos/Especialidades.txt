@@ -1,0 +1,10 @@
+Fonoaudiologia       
+Pediatria            
+Traumatologia        
+Gastroenterologia    
+Urologia             
+Infectologia         
+Neurologia           
+Psiquiatria          
+Cardiologia          
+Endocrinologia
