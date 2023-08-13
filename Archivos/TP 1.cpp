@@ -2,49 +2,60 @@
 #include<fstream>
 using namespace std;
 typedef char str20[21];
-
-//para espec bus lin e igualar
+typedef char str15[16];
+typedef str20 tvrEspec[20];
 
 struct tprMed{
- str20  nom;
- int  nroMat;
- str20 espec;
- char turno;
+    str20  nom;
+    int  nroMat;
+    str20 espec;
+    char turno;
+    };
+struct tprTurnos{
+    str15 obrSoc;
+    int nroCred;
 };
 
-typedef str20 tvrEspec[20];
 typedef tprMed   tvrMed[100];
+typedef tprTurnos ttrTurnos[20][31][24];
 
-bool LeeMed(ifstream &Medicos, tvrMed &vrMed, short im);
+//Prototipos
 bool LeeEspec(ifstream &Especialidades, tvrEspec &vrEspec, short ie);
-void ProcMedicos(ifstream &Medicos, tvrMed &vrMed, int &cardMed);
+bool LeeMed(ifstream &Medicos, tvrMed &vrMed, short im);
+bool LeeTurnos(ifstream &TurnosDiaHora, ttrTurnos &trTurnos, int cardEspec, tvrEspec vrEspec);
 void ProcEspecialidades(ifstream &Especialidades, tvrEspec &vrEspec, int &cardEspec);
-
+void ProcMedicos(ifstream &Medicos, tvrMed &vrMed, int &cardMed);
+void ProcTurnosDiaHora(ifstream &TurnosDiaHora, ttrTurnos &trTurnos, tvrEspec vrEspec, int &cardTurnos, int cardEspec);
+short BusLinF(str20 objetivo, int card, tvrEspec vrEspec, short &i);
+//fin Prototipos
 
 int main(){
-    int cardEspec,
-        cardMed;
+    int cardEspec = 0,
+        cardMed = 0,
+        cardTurnos = 0;
     tvrEspec vrEspec;
     tvrMed vrMed;
-
-    cardMed = 1;
-    cardEspec = 1;
+    ttrTurnos trTurnos;
 
     ifstream Medicos("Medicos.txt");
     ifstream Especialidades("Especialidades.txt");
+    ifstream TurnosDiaHora ("TurnosDiaHora.txt");
 
     ProcMedicos (Medicos, vrMed, cardMed);
     ProcEspecialidades (Especialidades, vrEspec, cardEspec);
+    ProcTurnosDiaHora (TurnosDiaHora, trTurnos, vrEspec, cardTurnos, cardEspec);
 
     Especialidades.close();
     Medicos.close();
-
+    TurnosDiaHora.close();
 
     cout << cardEspec << endl;
-    cout << cardMed;
+    cout << cardMed << endl;
+    cout << cardTurnos << endl;
 
     return 0;
 }
+
 
 bool LeeEspec(ifstream &Especialidades, tvrEspec &vrEspec, short ie) {
     Especialidades>>vrEspec[ie];
@@ -66,6 +77,49 @@ bool LeeMed(ifstream &Medicos, tvrMed &vrMed, short im) {
     return Medicos.good();
 }
 
+bool LeeTurnos(ifstream &TurnosDiaHora, ttrTurnos &trTurnos, int cardEspec, tvrEspec vrEspec) {
+    short i = 0,
+          j = 0,
+          h = 0,
+          m = 0;
+    int   k = 0;
+    char desc;
+    str20 TurnoEspec;
+    TurnosDiaHora.get(TurnoEspec, 21);
+    if (BusLinF(TurnoEspec, cardEspec, vrEspec, i) == 1000) {
+        cout << "No se encontro objetivo en funcion LeeTurnos, linea 47-58"<<endl;
+        }; // profundidad segun hora y minuto, de forma hhmm *//
+    TurnosDiaHora.ignore();
+    TurnosDiaHora >> j; // las columnas corresponden con los dias, empezando con el 0 (el dia 1 = pos 0)*/
+    TurnosDiaHora.ignore();
+    TurnosDiaHora >> h >> desc >> m;
+    h = h*100;
+    k = h+m; // profundidad segun hora y minuto, de forma hhmm *//
+    TurnosDiaHora.ignore();
+    TurnosDiaHora.get(trTurnos[i][j-1][k].obrSoc, 16);
+    TurnosDiaHora.ignore();
+    TurnosDiaHora >> trTurnos[i][j-1][k].nroCred;
+    TurnosDiaHora.ignore();
+
+
+
+    return TurnosDiaHora.good();
+}
+
+void ProcEspecialidades(ifstream &Especialidades, tvrEspec &vrEspec, int &cardEspec){
+        short ie;
+
+        ie = 0;
+
+        if (!Especialidades)
+        cout << "No se pudo abrir el archivo." << endl;
+
+        while (LeeEspec (Especialidades, vrEspec, ie)){
+        cardEspec = cardEspec + 1;
+        ++ie;
+        }
+}
+
 void ProcMedicos(ifstream &Medicos, tvrMed &vrMed, int &cardMed){
     short im;
 
@@ -81,16 +135,23 @@ void ProcMedicos(ifstream &Medicos, tvrMed &vrMed, int &cardMed){
         }
 }
 
-void ProcEspecialidades(ifstream &Especialidades, tvrEspec &vrEspec, int &cardEspec){
-        short ie;
 
-        ie = 0;
-
-        if (!Especialidades)
+void ProcTurnosDiaHora(ifstream &TurnosDiaHora, ttrTurnos &trTurnos, tvrEspec vrEspec, int &cardTurnos, int cardEspec){
+    if (!TurnosDiaHora)
         cout << "No se pudo abrir el archivo." << endl;
 
-        while (LeeEspec (Especialidades, vrEspec, ie)){
-        cardEspec = cardEspec + 1;
-        ++ie;
+    while (LeeTurnos(TurnosDiaHora, trTurnos, cardEspec, vrEspec)){
+        cardTurnos = cardTurnos + 1;
         }
+}
+
+short BusLinF (str20 objetivo, int card, tvrEspec vrEspec, short &i){
+    short aux;
+    for (aux = 0; aux < card; ++aux){
+        if (strcmp(vrEspec[aux], objetivo) == -32){         // NO SE PORQUE, SOLO FUNCA CON -32, NO PREGUNTES, SOLO DISFRUTA *//
+            i = aux;
+        }
+    }
+
+    return i;
 }
