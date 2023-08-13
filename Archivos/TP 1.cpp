@@ -86,9 +86,9 @@ bool LeeTurnos(ifstream &TurnosDiaHora, ttrTurnos &trTurnos, int cardEspec, tvrE
     char desc;
     str20 TurnoEspec;
     TurnosDiaHora.get(TurnoEspec, 21);
-    BusLinF(TurnoEspec, cardEspec, vrEspec, i) == 1000); // profundidad segun hora y minuto, de forma hhmm *//
+    BusLinF(TurnoEspec, cardEspec, vrEspec, i) == 1000); // profundidad segun hora y minuto, de forma hhmm
     TurnosDiaHora.ignore();
-    TurnosDiaHora >> j; // las columnas corresponden con los dias, empezando con el 0 (el dia 1 = pos 0)*/
+    TurnosDiaHora >> j; // las columnas corresponden con los dias, empezando con el 0 (el dia 1 = pos 0)
     TurnosDiaHora.ignore();
     TurnosDiaHora >> h >> desc >> m;
     h = h*100;
@@ -146,7 +146,7 @@ void ProcTurnosDiaHora(ifstream &TurnosDiaHora, ttrTurnos &trTurnos, tvrEspec vr
 short BusLinF (str20 objetivo, int card, tvrEspec vrEspec, short &i){
     short aux;
     for (aux = 0; aux < card; ++aux){
-        if (strcmp(vrEspec[aux], objetivo) == -32){         // NO SE PORQUE, SOLO FUNCA CON -32, NO PREGUNTES, SOLO DISFRUTA *//
+        if (strcmp(vrEspec[aux], objetivo) == -32){         // NO SE PORQUE, SOLO FUNCA CON -32, NO PREGUNTES, SOLO DISFRUTA
             i = aux;
         }
     }
